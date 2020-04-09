@@ -8,7 +8,14 @@
     {% extends "templates.html" %}
     {% block content %}
     <h1> Search </h1>
-    <p> search! </p>
+    <h2> Search for a friend by username! </h2>
+    <form method="POST">
+      <label for="username">Username</label> 
+      <input type="text", name="username"> <br>
+      <input type="submit">
+    </form>
+    <p> <pre>{{ text }}
+    </pre> </p>
     {% endblock %}
   </body>
 </html>

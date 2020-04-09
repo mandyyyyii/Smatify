@@ -8,7 +8,16 @@
     {% extends "templates.html" %}
     {% block content %}
     <h1> Update </h1>
-    <p> update! </p>
+    <p> <pre>NUM FRIENDS: {{ num }} <br><br>CURRENT FRIENDS IN DATABASE: <br><br>{{ text }}
+    </pre> </p>
+    <h2> Update friend's music taste rating here: </h1> 
+      <form method="POST">
+        <label for="username">Username</label> 
+        <input type="text", name="username"> <br>
+        <label for="rating">Rate their music taste from 1-5</label>
+        <input type="text", name="rating"> <br>
+        <input type="submit">
+      </form>
     {% endblock %}
   </body>
 </html>

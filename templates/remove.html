@@ -8,7 +8,14 @@
     {% extends "templates.html" %}
     {% block content %}
     <h1> Remove </h1>
-    <p> remove! </p>
+    <p> <pre>NUM FRIENDS: {{ num }} <br><br>CURRENT FRIENDS IN DATABASE: <br><br>{{ text }}
+    </pre> </p>
+    <h2> Remove a friend by their username:</h2>
+    <form method="POST">
+      <label for="username">Username</label> 
+      <input type="text", name="username"> <br>
+      <input type="submit">
+    </form>
     {% endblock %}
   </body>
 </html>

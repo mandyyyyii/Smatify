@@ -1,65 +1,119 @@
 import pymongo
-from flask import Flask, render_template, request  
+import pprint
+from flask import Flask, flash, render_template, request, redirect
 from pymongo import MongoClient
 
 app = Flask(__name__)
+app.secret_key = "super secret key"
 
+connectionString = "mongodb+srv://bin:Robin1999@cluster0-qgaoz.mongodb.net/test?retryWrites=true&w=majority"
+client = MongoClient(connectionString)
+db = client.smartify
+
+
+# HOME PAGE
 @app.route("/")
 def home():
-    connectionString = "mongodb+srv://bin:Robin1999@cluster0-qgaoz.mongodb.net/test?retryWrites=true&w=majority"
-    client = MongoClient(connectionString)
-    db = client.smartify
-    #collection = db.users
+    return render_template("first.html")
 
-    # EXAMPLE DOCUMENT
-    test = ({"name": "Hannah", "password": "12345", "age": 19 })
 
-    # INSERT
-    #db.users.insert_one(test)
 
-    # REMOVE
-    #db.users.remove( { "_id": 1 } )
-
-    # UPDATE
-    #db.users.update_one({"name": "old_name"},{"$set": {"name": "new_name"}})
-    
-    # print everything in collection
-    for x in db.users.find({}):
-        print(x)
-
-    # print number of things in collection
-    count = db.users.count_documents({})
-    print(count)
-
-    #if "open" in request.form:
-    #    print("open pressed")
-    #elif "close" in request.form:
-    #    print("close pressed")
-
-    return render_template("first.html", num = count)
-
-    
-#@app.route("/about")
-#def about():
-#    return render_template("about.html")
+# INSERT
 
 @app.route("/insert")
 def insert():
-    return render_template("insert.html")
+    # print everything in collection
+    database_text = ""
+
+    for x in db.friends.find({}):
+        database_text += pprint.pformat(x)
+        database_text += '\n\n'
+
+    count = db.friends.count_documents({})
     
+    return render_template("insert.html", text = database_text, num = count)
+
+
+@app.route('/insert', methods=['POST'])
+def process_insert():
+    username = request.form['username']
+    name = request.form['name']
+    rating = request.form['rating']
+
+    new_friend = ({"username": username, "name": name, "rating": rating })
+
+    db.friends.insert_one(new_friend)
+
+    return insert()
+
+
+# SEARCH 
+
 @app.route("/search")
 def search():
-    return render_template("search.html")
+    return render_template("search.html", text = "")
 
+@app.route('/search', methods=['POST'])
+def process_search():
+    username = request.form['username']
+    
+    friend = ""
+    for x in db.friends.find({"username": username}):
+        friend += pprint.pformat(x)
+        friend += '\n\n'
+    
+    return render_template("search.html", text = friend)
+
+
+
+
+# UPDATE
 
 @app.route("/update")
 def update():
-    return render_template("update.html")
+    database_text = ""
+
+    for x in db.friends.find({}):
+        database_text += pprint.pformat(x)
+        database_text += '\n\n'
+
+    count = db.friends.count_documents({})
+
+    return render_template("update.html", text = database_text, num = count)
+
+@app.route('/update', methods=['POST'])
+def process_update():
+    username = request.form['username']
+    rating = request.form['rating']
+
+    db.friends.update_one({"username": username},{"$set": {"rating": rating}})
+
+    return update()
+
+
+
+# REMOVE
 
 @app.route("/remove")
 def remove():
-    return render_template("remove.html")
+    database_text = ""
 
+    for x in db.friends.find({}):
+        database_text += pprint.pformat(x)
+        database_text += '\n\n'
+
+    count = db.friends.count_documents({})
+
+    return render_template("remove.html", text = database_text, num = count)
+
+
+@app.route('/remove', methods=['POST'])
+def process_remove():
+    username = request.form['username']
+
+    db.friends.remove( { "username": username } )
+
+    return remove()
 
 
 if __name__ == "__main__":
