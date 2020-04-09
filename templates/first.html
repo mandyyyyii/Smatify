@@ -2,13 +2,15 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Business Memo Check</title>
+    <title>Smartify</title>
   </head>
   <body>
     {% extends "templates.html" %}
     {% block content %}
     <h1> Get Start With Your Song! </h1>
-    <p> Enjoy the best experience before! </p>
+    <p> Enjoy the best experience before! NUM DOCUMENTS: ({{ num }}) </p>
+    <input type="submit" name="open" value="Open">
+    <input type="submit" name="close" value="Close">
     {% endblock %}
   </body>
 </html>
