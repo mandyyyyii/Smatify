@@ -1,11 +1,32 @@
 import pymongo
 import pprint
+import pymysql
 from flask import Flask, flash, render_template, request, redirect
 from pymongo import MongoClient
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text
+
+
 
 app = Flask(__name__)
 app.secret_key = "super secret key"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:cs411project@localhost/smartify'
+SQL_db = SQLAlchemy(app)
 
+class Friend(SQL_db.Model):
+
+    __tablename__ = 'Friends'
+
+    username = SQL_db.Column(SQL_db.String(150), nullable=False, primary_key=True)
+    name = SQL_db.Column(SQL_db.String(150), nullable=False)
+    rating = SQL_db.Column(SQL_db.Integer, nullable=False)
+
+
+# SQL connection
+engine = create_engine('mysql+pymysql://root:cs411project@localhost/smartify')
+
+# mongodb connection
 connectionString = "mongodb+srv://bin:Robin1999@cluster0-qgaoz.mongodb.net/test?retryWrites=true&w=majority"
 client = MongoClient(connectionString)
 db = client.smartify
@@ -22,16 +43,24 @@ def home():
 
 @app.route("/insert")
 def insert():
-    # print everything in collection
-    database_text = ""
+    # MONGODB: print everything in collection
+    # database_text = ""
 
-    for x in db.friends.find({}):
-        database_text += pprint.pformat(x)
-        database_text += '\n\n'
+    # for x in db.friends.find({}):
+    #     database_text += pprint.pformat(x)
+    #     database_text += '\n\n'
 
-    count = db.friends.count_documents({})
+    # count = db.friends.count_documents({})
+
+    with engine.connect() as con:
     
-    return render_template("insert.html", text = database_text, num = count)
+        rows = con.execute('SELECT * FROM friends')
+        data = rows.fetchall()
+
+        count = con.execute('SELECT COUNT(*) FROM friends')
+        final_count = count.fetchall()
+
+        return render_template("insert.html", text = data, num = final_count)
 
 
 @app.route('/insert', methods=['POST'])
@@ -40,9 +69,9 @@ def process_insert():
     name = request.form['name']
     rating = request.form['rating']
 
-    new_friend = ({"username": username, "name": name, "rating": rating })
-
-    db.friends.insert_one(new_friend)
+    new_friend = Friend(username = username, name = name, rating = rating)
+    SQL_db.session.add(new_friend)
+    SQL_db.session.commit()
 
     return insert()
 
@@ -57,10 +86,18 @@ def search():
 def process_search():
     username = request.form['username']
     
-    friend = ""
-    for x in db.friends.find({"username": username}):
-        friend += pprint.pformat(x)
-        friend += '\n\n'
+    # friend = ""
+    # for x in db.friends.find({"username": username}):
+    #     friend += pprint.pformat(x)
+    #     friend += '\n\n'
+
+    with engine.connect() as con:
+        command = "SELECT * FROM friends WHERE username = '"
+        command += username
+        command += "'"
+
+        rows = con.execute(command)
+        friend = rows.fetchall()
     
     return render_template("search.html", text = friend)
 
@@ -71,22 +108,38 @@ def process_search():
 
 @app.route("/update")
 def update():
-    database_text = ""
+    # MONGODB
+    # database_text = ""
 
-    for x in db.friends.find({}):
-        database_text += pprint.pformat(x)
-        database_text += '\n\n'
+    # for x in db.friends.find({}):
+    #     database_text += pprint.pformat(x)
+    #     database_text += '\n\n'
 
-    count = db.friends.count_documents({})
+    # count = db.friends.count_documents({})
 
-    return render_template("update.html", text = database_text, num = count)
+    with engine.connect() as con:
+    
+        rows = con.execute('SELECT * FROM friends')
+        data = rows.fetchall()
+
+        count = con.execute('SELECT COUNT(*) FROM friends')
+        final_count = count.fetchall()
+
+    return render_template("update.html", text = data, num = final_count)
+
 
 @app.route('/update', methods=['POST'])
 def process_update():
     username = request.form['username']
     rating = request.form['rating']
 
-    db.friends.update_one({"username": username},{"$set": {"rating": rating}})
+    # MONGODB
+    # db.friends.update_one({"username": username},{"$set": {"rating": rating}})
+
+    friend = Friend.query.filter_by(username = username).first()
+    if friend:
+        friend.rating = rating
+    SQL_db.session.commit()
 
     return update()
 
@@ -96,22 +149,35 @@ def process_update():
 
 @app.route("/remove")
 def remove():
-    database_text = ""
+    # MONGODB
+    # database_text = ""
 
-    for x in db.friends.find({}):
-        database_text += pprint.pformat(x)
-        database_text += '\n\n'
+    # for x in db.friends.find({}):
+    #     database_text += pprint.pformat(x)
+    #     database_text += '\n\n'
 
-    count = db.friends.count_documents({})
+    # count = db.friends.count_documents({})
 
-    return render_template("remove.html", text = database_text, num = count)
+    with engine.connect() as con:
+    
+        rows = con.execute('SELECT * FROM friends')
+        data = rows.fetchall()
+
+        count = con.execute('SELECT COUNT(*) FROM friends')
+        final_count = count.fetchall()
+
+    return render_template("remove.html", text = data, num = final_count)
 
 
 @app.route('/remove', methods=['POST'])
 def process_remove():
     username = request.form['username']
 
-    db.friends.remove( { "username": username } )
+    # MONGODB
+    # db.friends.remove( { "username": username } )
+
+    Friend.query.filter_by(username = username).delete()
+    SQL_db.session.commit()
 
     return remove()
 
