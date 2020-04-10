@@ -84,7 +84,7 @@ def search():
 
 @app.route('/search', methods=['POST'])
 def process_search():
-    username = request.form['username']
+    rating = request.form['rating']
     
     # friend = ""
     # for x in db.friends.find({"username": username}):
@@ -92,8 +92,8 @@ def process_search():
     #     friend += '\n\n'
 
     with engine.connect() as con:
-        command = "SELECT * FROM friends WHERE username = '"
-        command += username
+        command = "SELECT * FROM friends WHERE rating = '"
+        command += rating
         command += "'"
 
         rows = con.execute(command)
