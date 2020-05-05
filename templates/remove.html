@@ -8,12 +8,18 @@
     {% extends "templates.html" %}
     {% block content %}
     <h1> Remove </h1>
-    <p> <pre>NUM FRIENDS: {{ num }} <br><br>CURRENT FRIENDS IN DATABASE: <br><br>{{ text }}
-    </pre> </p>
-    <h2> Remove a friend by their username:</h2>
+  
+    <h2> Remove a song or artist from your current favorites:</h2>
     <form method="POST">
-      <label for="username">Username</label> 
-      <input type="text", name="username"> <br>
+      <label for="name">Name</label> 
+      <input type="text", name="name"> 
+      
+      <select class='form-group' name='search_type'>
+        <option value='artist'>Artist</option>
+        <option value='song'>Song</option>
+      </select>
+      
+      <br>
       <input type="submit">
     </form>
     {% endblock %}

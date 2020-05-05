@@ -8,8 +8,33 @@
   <body>
     {% extends "templates.html" %}
     {% block content %}
-    <h1> Smartify Home</h1>
-    <p> Smartify is music application that keeps track of your most recent and favorite songs and updates your playlist dynamically! </p>
-    {% endblock %}
+    
+    {% if not user %}
+
+      <div class="container">
+        <div class="mt-1">
+          <h1>Profile</h1>
+        </div>
+        <p class="lead">You need to log in to see this page</p>
+
+        <a type="button" class="btn btn-default" href="/auth">Login</a>
+      </div>
+
+    {% else %}
+        <h1> Smartify Home</h1>
+        <p> Smartify is music application that keeps track of your most recent and favorite songs and updates your playlist dynamically! </p>
+
+        <h3> Hi {{ user.display_name }} :) </h3>
+        {% if user.images %}
+            <img src="{{user.images[0].url}}" class="img-square">
+          {% else %}
+            <img src="http://bit.ly/2nXRRfX" class="img-square">
+          {% endif %}
+
+      
+
+        
+   {% endif %}
+  {% endblock %}
   </body>
 </html>
