@@ -282,25 +282,35 @@ def process_insert():
     rating = request.form['rating']
     search_type = request.form['search_type']
 
-    print(name)
-
     if 'auth_header' in session:
         auth_header = session['auth_header']
+       
+        if (search_type == 'artist'):
+            data = spotify.search('artist', name, auth_header) 
+            result = data['artists']['items']
+            print(result[0])
 
-        access_token = auth_header['Authorization']
-        access_token = access_token[7:]
-        print(access_token)
+            artist_id = "spotify:artist:"
+            artist_id += result[0]['id']
+            artist_name = result[0]['name']
+            popularity = result[0]['popularity']
 
-        artist = spotify.search('artist', name, access_token) 
-        print(artist)
+            new_artist = Artist(artist_id = artist_id, artist_name = artist_name, popularity = popularity, rating = rating)
+            SQL_db.session.add(new_artist)
+        else:
+            data = spotify.search('track', name, auth_header) 
+            result = data['tracks']['items']
+            print(result[0])
 
-        #if valid_token(profile):
-        #    return render_template("first.html", user=profile)
-    
+            song_id = "spotify:track:"
+            song_id += result[0]['id']
+            song_name = result[0]['name']
+            popularity = result[0]['popularity']
 
-    #new_friend = Friend(username = username, name = name, rating = rating)
-    #SQL_db.session.add(new_friend)
-    #SQL_db.session.commit()
+            new_song = Song(song_id = song_id, song_name = song_name, popularity = popularity, rating = rating)
+            SQL_db.session.add(new_song)
+
+        SQL_db.session.commit()
 
     return insert()
 

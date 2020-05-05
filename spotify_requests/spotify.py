@@ -157,14 +157,14 @@ SEARCH_ENDPOINT = "{}/{}".format(SPOTIFY_API_URL, 'search')
 
 
 # https://developer.spotify.com/web-api/search-item/
-def search(search_type, name, access_token):
+def search(search_type, name, auth_header):
     if search_type not in ['artist', 'track', 'album', 'playlist']:
         print('invalid type')
         return None
     myparams = {'type': search_type}
     myparams['q'] = name
-    myheaders = {'access_token': access_token}
-    resp = requests.get(SEARCH_ENDPOINT, headers = myheaders, params=myparams)
+    #headers=auth_header
+    resp = requests.get(SEARCH_ENDPOINT, headers = auth_header, params=myparams)
     return resp.json()
 
 # ------------------ 4. USER RELATED REQUETS  ---------- #
