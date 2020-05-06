@@ -10,10 +10,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from spotify_requests import spotify
 
+# credit for spotify api: https://github.com/mari-linhares/spotify-flask
+
 try:
     import configparser
 except:
     from six.moves import configparser
+
 
 
 
