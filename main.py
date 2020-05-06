@@ -117,7 +117,7 @@ def home():
                             #print(v)
 
         print("trying mongodb")
-        
+
         # clear database first
         db.recently_played.drop()
 
@@ -125,8 +125,6 @@ def home():
             new_song = ({"song_uri": song_uris[i], "song_name": song_names[i], "played_at": played_at[i] })
             db.recently_played.insert_one(new_song)
 
-        #new_song = ({"song_uri": "test", "song_name": "test", "played_at": "test" })
-        #db.recently_played.insert_one(new_song)
 
         # LOAD DATA ON TOP SONGS AND ARTISTS INTO MYSQL DATABASE
 
@@ -252,6 +250,24 @@ def home():
             return render_template("first.html",
                                 user=profile)
     return render_template("first.html")
+
+
+@app.route("/recent")
+def recent():
+    if 'auth_header' in session:
+        auth_header = session['auth_header']
+
+        profile = spotify.get_users_profile(auth_header)
+
+        text = ""
+        for x in db.recently_played.find({}, {'_id': 0,'song_name': 1, 'played_at': 1}):
+            text += pprint.pformat(x)
+            text += '\n\n'
+        
+        if valid_token(profile):
+            return render_template("recent.html",
+                                user=profile, text = text)
+    return render_template("recent.html")
 
 
 
@@ -643,21 +659,19 @@ def process_playlist():
         
         # loop through all track ids
 
-        count = 0
-
         for current_uri in track_uris:
             # search mongodb database for track id
 
-            result = ""   # CHANGEeEeeeeeeeeeee
+            found = ""   # CHANGEeEeeeeeeeeeee
 
             for x in db.recently_played.find({"song_uri": current_uri}):
-                result += pprint.pformat(x)
-                result += '\n\n'
+                found += pprint.pformat(x)
+                found += '\n\n'
             
-            if (result == ""):
+            if (found == ""):
                 # if not found, remove track id from playlist
                 
-                #spotify.remove_track_from_playlist(auth_header, playlist_id, current_uri)
+                spotify.remove_track_from_playlist(auth_header, playlist_id, current_uri)
                 print("NOT FOUND")
                 
                 with engine.connect() as con:

@@ -21,17 +21,9 @@
       </div>
 
     {% else %}
-        <h1> Smartify Home</h1>
-        <p> Smartify is a music application that keeps track of your most recent and favorite songs and updates your playlist dynamically! </p>
-
-        <h3> Hi {{ user.display_name }} :) </h3>
-        {% if user.images %}
-            <img src="{{user.images[0].url}}" class="img-square">
-          {% else %}
-            <img src="http://bit.ly/2nXRRfX" class="img-square">
-          {% endif %}
-
-      
+        <h3>RECENTLY PLAYED:</h3>
+     <p> <pre>(song_id, song_name, played_at)<br><br>{{ text }}
+        </pre> </p>
 
         
    {% endif %}
