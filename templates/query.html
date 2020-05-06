@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Smartify</title>
+  </head>
+  <body>
+    {% extends "templates.html" %}
+    {% block content %}
+    
+    {% if not user %}
+
+      <div class="container">
+        <div class="mt-1">
+          <h1>Profile</h1>
+        </div>
+        <p class="lead">You need to log in to see this page</p>
+
+        <a type="button" class="btn btn-default" href="/auth">Login</a>
+      </div>
+
+    {% else %}
+        <h3>ARTISTS YOU'RE CURRENTLY LOVING:</h3>
+        <p> <pre>--> artists within your top 50 artists that also have songs within your top 50 songs<br><br><br>(artist name, num of songs within top 50)<br><br>{{ current_data }}
+        </pre> </p>
+
+        <br>
+
+        <h3>YOUR TOP 50 SONGS RANKED BY GLOBAL POPULARITY:</h3>
+        <p> <pre>(song name, popularity score)<br><br>{{ popularity_data }}
+        </pre> </p>
+
+        <br>
+
+        <h3>HOW POPULAR IS YOUR MUSIC TASTE?</h3>
+        <p> <pre>Your artist popularity: {{ artist_rating }} <br>Your song popularity: {{ song_rating }} <br><br>Your overall music taste: {{ popular_rating }} <br>
+        </pre> </p>
+        
+   {% endif %}
+  {% endblock %}
+  </body>
+</html>

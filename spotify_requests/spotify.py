@@ -194,6 +194,53 @@ def get_users_playlists(auth_header):
     resp = requests.get(url, headers=auth_header)
     return resp.json()
 
+# https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlists-tracks/
+def get_playlist_tracks(auth_header, playlist_id):
+    url = "{}/{}/{}/{}".format(SPOTIFY_API_URL, 'playlists', playlist_id, 'tracks') 
+    resp = requests.get(url, headers=auth_header)
+    return resp.json()
+
+
+def remove_track_from_playlist(auth_header, playlist_id, track_uri):
+    url = "{}/{}/{}/{}".format(SPOTIFY_API_URL, 'playlists', playlist_id, 'tracks') 
+    
+    headers = auth_header
+    headers['Accept'] = 'application/json'
+    headers['Content-Type'] = 'application/json'
+
+    tracks = []
+    track = {"uri": track_uri}
+    tracks.append(track)
+    final_tracks = { "tracks" : tracks}
+    json_dump = json.dumps(final_tracks)
+    
+    resp = requests.delete(url, headers=headers, data= json_dump)
+    return resp.json()
+
+
+# https://developer.spotify.com/documentation/web-api/reference/playlists/add-tracks-to-playlist/
+def add_track_to_playlist(auth_header, playlist_id, track_uri):
+    url = "{}/{}/{}/{}".format(SPOTIFY_API_URL, 'playlists', playlist_id, 'tracks') 
+    
+    headers = auth_header
+    headers['Content-Type'] = 'application/json'
+
+    uris = []
+    #track = {"uri": track_uri}
+    uris.append(track_uri)
+    final_tracks = { "uris" : uris}
+    json_dump = json.dumps(final_tracks)
+    
+    resp = requests.post(url, headers=headers, data= json_dump)
+    return resp.json()
+
+# https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/
+def get_track_recommendation(auth_header, seed):
+    url = "{}/{}?limit=1&seed_tracks={}".format(SPOTIFY_API_URL, 'recommendations', seed) 
+    
+    resp = requests.get(url, headers=auth_header)
+    return resp.json()
+
 
 # https://developer.spotify.com/web-api/get-users-top-artists-and-tracks/
 def get_users_top(auth_header, t):
@@ -208,6 +255,7 @@ def get_users_top(auth_header, t):
 # https://developer.spotify.com/web-api/web-api-personalization-endpoints/get-recently-played/
 def get_users_recently_played(auth_header):
     url = USER_RECENTLY_PLAYED_ENDPOINT
+    url += "?limit=50"
     resp = requests.get(url, headers=auth_header)
     return resp.json()
 
