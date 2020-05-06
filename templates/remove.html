@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Smartify - Remove</title>
+  </head>
+  <body>
+    {% extends "templates.html" %}
+    {% block content %}
+    <h1> Remove </h1>
+  
+    <h2> Remove a song or artist from your current favorites:</h2>
+    <form method="POST">
+      <label for="name">Name</label> 
+      <input type="text", name="name"> 
+      
+      <select class='form-group' name='search_type'>
+        <option value='artist'>Artist</option>
+        <option value='song'>Song</option>
+      </select>
+      
+      <br>
+      <input type="submit">
+    </form>
+    {% endblock %}
+  </body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Smartify - Update</title>
+  </head>
+  <body>
+    {% extends "templates.html" %}
+    {% block content %}
+    <h1> Update </h1>
+    <h2> Change the rating of a song or artist: </h1> 
+      <form method="POST">
+        <label for="name">Name</label> 
+        <input type="text", name="name"> <br>
+        <label for="rating">Rating (from 1-5)</label>
+        <input type="text", name="rating"> 
+        <select class='form-group' name='search_type'>
+          <option value='artist'>Artist</option>
+          <option value='song'>Song</option>
+        </select>
+        <br>
+        <input type="submit">
+      </form>
+    {% endblock %}
+  </body>
+</html>
